@@ -374,3 +374,10 @@ The following items were in progress or planned when this session ended:
 To pick up where this session left off, share this README with your new chat and reference specific file paths listed in the [Project Structure](#project-structure) section. The most relevant file for the last active work was:
 
 - `client/src/hooks/useMissions.js` — custom React Query + Socket.IO hook for mission data
+- **Dashboard** — Live stat cards (active missions, total missions, total assets, online personnel), three charts (Missions by Status, Assets by Type, Asset Status), and a live activity feed
+- **Missions** — CRUD with status workflow (Planning → Active → Completed / Aborted), timeline updates, priority levels
+- **Assets** — Track vehicles, personnel, equipment, and UAVs with live GPS simulation
+- **Map** — Interactive Leaflet map with asset markers, mission markers, mission zone polygons, and dark/satellite tile toggle
+- **Chat** — Real-time messaging across four channels (**general**, **operations**, **alerts**, **intel**) via Socket.IO
+- **Events** — Full audit log of all system activity
+- **Live Simulation** — Run `npm run simulate` to move assets in real-time on the map

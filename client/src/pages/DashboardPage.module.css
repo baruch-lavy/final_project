@@ -134,3 +134,115 @@
   color: var(--text-muted);
   margin-top: 2px;
 }
+
+.threatRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.threatPanel {
+  padding: 20px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+}
+
+.sysPanel {
+  padding: 20px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+}
+
+.threatContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.threatLevel {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-family: monospace;
+}
+
+.threatBar {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.threatBarFill {
+  height: 100%;
+  border-radius: 3px;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.threatSub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.sysList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sysItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.sysDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sysDotOk {
+  background: var(--accent-green);
+  box-shadow: 0 0 6px var(--accent-green);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.sysDotWarn {
+  background: var(--accent-orange);
+  box-shadow: 0 0 6px var(--accent-orange);
+}
+
+.sysLabel {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
+.sysOk {
+  font-size: 10px;
+  color: var(--accent-green);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.sysWarn {
+  font-size: 10px;
+  color: var(--accent-orange);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.eventIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  width: 20px;
+  text-align: center;
+}
