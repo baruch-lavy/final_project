@@ -35,6 +35,7 @@ const TopBar = () => {
   const [alertText, setAlertText] = useState("");
   const [alertOpen, setAlertOpen] = useState(false);
   const notifRef = useRef(null);
+  const alertRef = useRef(null);
   const unreadCount = notifications.length;
 
   useEffect(() => {
@@ -42,11 +43,14 @@ const TopBar = () => {
     return () => clearInterval(id);
   }, []);
 
-  // Close dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e) => {
       if (notifRef.current && !notifRef.current.contains(e.target)) {
         setNotifOpen(false);
+      }
+      if (alertRef.current && !alertRef.current.contains(e.target)) {
+        setAlertOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
@@ -85,7 +89,7 @@ const TopBar = () => {
 
         {/* Commander Alert Broadcast */}
         {isCommander && (
-          <div className={styles.alertWrap}>
+          <div className={styles.alertWrap} ref={alertRef}>
             <button
               className={`${styles.iconBtn} ${alertOpen ? styles.iconBtnActive : ""}`}
               onClick={() => setAlertOpen((o) => !o)}
