@@ -178,3 +178,44 @@ body {
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
 }
+
+/* Scan animation used in radar/sidebar */
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Fade in up */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Text flicker (for "CLASSIFIED" style text) */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.4; }
+  95% { opacity: 1; }
+  97% { opacity: 0.6; }
+}
+
+.animate-flicker {
+  animation: flicker 4s ease-in-out infinite;
+}
+
+/* Glow pulsing for important indicators */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 5px currentColor; }
+  50% { box-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
+}
+
+.animate-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Typing cursor */
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}

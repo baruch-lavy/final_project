@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { connectSocket, disconnectSocket, getSocket } from "../services/socket";
+import { connectSocket, disconnectSocket } from "../services/socket";
 import api from "../services/api";
 
 export const useAuthStore = create((set, get) => ({
