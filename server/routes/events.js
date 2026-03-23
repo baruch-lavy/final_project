@@ -1,13 +1,15 @@
-const router = require("express").Router();
-const { auth } = require("../middleware/auth");
-const {
+import { Router } from "express";
+import { auth } from "../middleware/auth.js";
+import {
   getEvents,
   getDashboardStats,
-} = require("../controllers/eventController");
+} from "../controllers/eventController.js";
+
+const router = Router();
 
 router.use(auth);
 
 router.get("/dashboard", getDashboardStats);
 router.get("/", getEvents);
 
-module.exports = router;
+export default router;

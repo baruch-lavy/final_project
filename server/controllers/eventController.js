@@ -1,6 +1,9 @@
-const Event = require("../models/Event");
+import Event from "../models/Event.js";
+import Mission from "../models/Mission.js";
+import Asset from "../models/Asset.js";
+import User from "../models/User.js";
 
-exports.getEvents = async (req, res, next) => {
+export const getEvents = async (req, res, next) => {
   try {
     const { type, limit } = req.query;
     const filter = {};
@@ -18,12 +21,8 @@ exports.getEvents = async (req, res, next) => {
   }
 };
 
-exports.getDashboardStats = async (req, res, next) => {
+export const getDashboardStats = async (req, res, next) => {
   try {
-    const Mission = require("../models/Mission");
-    const Asset = require("../models/Asset");
-    const User = require("../models/User");
-
     const [
       totalMissions,
       activeMissions,

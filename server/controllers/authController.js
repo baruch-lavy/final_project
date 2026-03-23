@@ -1,13 +1,13 @@
-const jwt = require("jsonwebtoken");
-const { validationResult } = require("express-validator");
-const User = require("../models/User");
-const Event = require("../models/Event");
+import jwt from "jsonwebtoken";
+import { validationResult } from "express-validator";
+import User from "../models/User.js";
+import Event from "../models/Event.js";
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
-exports.register = async (req, res, next) => {
+export const register = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -44,7 +44,7 @@ exports.register = async (req, res, next) => {
   }
 };
 
-exports.login = async (req, res, next) => {
+export const login = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -77,7 +77,7 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.getMe = async (req, res, next) => {
+export const getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     res.json(user.toJSON());
@@ -86,7 +86,7 @@ exports.getMe = async (req, res, next) => {
   }
 };
 
-exports.getUsers = async (req, res, next) => {
+export const getUsers = async (req, res, next) => {
   try {
     const users = await User.find().select("-password").sort({ username: 1 });
     res.json(users);

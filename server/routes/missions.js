@@ -1,7 +1,7 @@
-const router = require("express").Router();
-const { body } = require("express-validator");
-const { auth, authorize } = require("../middleware/auth");
-const {
+import { Router } from "express";
+import { body } from "express-validator";
+import { auth, authorize } from "../middleware/auth.js";
+import {
   getMissions,
   getMission,
   createMission,
@@ -10,7 +10,9 @@ const {
   addMissionUpdate,
   deleteMission,
   getMissionStats,
-} = require("../controllers/missionController");
+} from "../controllers/missionController.js";
+
+const router = Router();
 
 router.use(auth);
 
@@ -43,4 +45,4 @@ router.put(
 router.post("/:id/updates", addMissionUpdate);
 router.delete("/:id", authorize("Commander"), deleteMission);
 
-module.exports = router;
+export default router;

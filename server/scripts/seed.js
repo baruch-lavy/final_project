@@ -1,11 +1,11 @@
-require("dotenv").config();
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
-const User = require("../models/User");
-const Mission = require("../models/Mission");
-const Asset = require("../models/Asset");
-const Message = require("../models/Message");
-const Event = require("../models/Event");
+import "dotenv/config";
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+import User from "../models/User.js";
+import Mission from "../models/Mission.js";
+import Asset from "../models/Asset.js";
+import Message from "../models/Message.js";
+import Event from "../models/Event.js";
 
 const seed = async () => {
   try {
