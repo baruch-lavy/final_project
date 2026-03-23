@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../services/api";
 import { useSocketStore } from "../stores/socketStore";
+import { useUIStore } from "../stores/uiStore";
 
 const MISSIONS_KEY = ["missions"];
 
@@ -13,6 +14,7 @@ const fetchMissions = async () => {
 export const useMissions = () => {
   const queryClient = useQueryClient();
   const socket = useSocketStore((s) => s.socket);
+  const addNotification = useUIStore((s) => s.addNotification);
 
   const query = useQuery({
     queryKey: MISSIONS_KEY,
@@ -26,6 +28,7 @@ export const useMissions = () => {
 
     const onCreated = (mission) => {
       queryClient.setQueryData(MISSIONS_KEY, (old = []) => [mission, ...old]);
+      addNotification({ type: "success", title: "Mission Created", message: `"${mission.title}" created` });
     };
     const onUpdated = (mission) => {
       queryClient.setQueryData(MISSIONS_KEY, (old = []) =>
@@ -36,6 +39,7 @@ export const useMissions = () => {
       queryClient.setQueryData(MISSIONS_KEY, (old = []) =>
         old.map((m) => (m._id === mission._id ? mission : m)),
       );
+      addNotification({ type: "info", title: "Mission Updated", message: `"${mission.title}" → ${mission.status}` });
     };
     const onDeleted = ({ _id }) => {
       queryClient.setQueryData(MISSIONS_KEY, (old = []) =>
@@ -54,7 +58,7 @@ export const useMissions = () => {
       socket.off("mission:statusChanged", onStatusChanged);
       socket.off("mission:deleted", onDeleted);
     };
-  }, [socket, queryClient]);
+  }, [socket, queryClient, addNotification]);
 
   return {
     missions: query.data ?? [],
