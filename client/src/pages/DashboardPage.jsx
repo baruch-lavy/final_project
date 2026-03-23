@@ -1,4 +1,4 @@
-import { use, Suspense, useMemo } from "react";
+import { Suspense, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   PieChart,
@@ -122,6 +122,7 @@ const DashboardContent = () => {
   const { data: stats, isLoading } = useDashboardStats();
   const { events } = useEvents(15);
   const { missions } = useMissions();
+  const trendData = useMemo(() => generateTrendData(stats?.totalMissions), [stats?.totalMissions]);
 
   if (isLoading) return <Spinner />;
   if (!stats) return null;
@@ -129,7 +130,6 @@ const DashboardContent = () => {
   const missionStatusData = (stats.missionsByStatus || []).map(({ _id, count }) => ({ name: _id, value: count }));
   const assetTypeData = (stats.assetsByType || []).map(({ _id, count }) => ({ name: _id, value: count }));
   const assetStatusData = (stats.assetsByStatus || []).map(({ _id, count }) => ({ name: _id, value: count }));
-  const trendData = useMemo(() => generateTrendData(stats.totalMissions), [stats.totalMissions]);
   const threat = getThreatLevel(missions);
 
   return (

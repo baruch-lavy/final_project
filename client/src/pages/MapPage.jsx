@@ -6,7 +6,6 @@ import {
   Popup,
   Polygon,
   Polyline,
-  useMap,
 } from "react-leaflet";
 import L from "leaflet";
 import { useMissions } from "../hooks/useMissions";
@@ -102,8 +101,10 @@ const SAT_TILES = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Im
 // Track asset location history for trails
 const useAssetTrails = (assets) => {
   const trailsRef = useRef({});
+  const [trails, setTrails] = useState({});
 
   useEffect(() => {
+    let changed = false;
     assets.forEach((asset) => {
       if (!asset.location?.coordinates) return;
       const [lng, lat] = asset.location.coordinates;
@@ -111,11 +112,13 @@ const useAssetTrails = (assets) => {
       const last = trail[trail.length - 1];
       if (!last || last[0] !== lat || last[1] !== lng) {
         trailsRef.current[asset._id] = [...trail, [lat, lng]].slice(-8);
+        changed = true;
       }
     });
+    if (changed) setTrails({ ...trailsRef.current });
   }, [assets]);
 
-  return trailsRef.current;
+  return trails;
 };
 
 const MapContent = () => {
