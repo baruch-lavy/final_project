@@ -1,4 +1,11 @@
 import { useState, Suspense } from "react";
+import { motion, AnimatePresence } from "framer-motion"; // eslint-disable-line no-unused-vars
+import {
+  HiOutlineLightningBolt,
+  HiOutlineTruck,
+  HiOutlineExclamation,
+  HiOutlineCog,
+} from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEvents } from "../hooks/useEvents";
 import { Spinner } from "../components/ui/Loader";
