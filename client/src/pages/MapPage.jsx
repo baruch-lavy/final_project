@@ -1,4 +1,4 @@
-import { useState, Suspense } from "react";
+import { useState, Suspense, useMemo } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -72,10 +72,26 @@ const DARK_TILES =
 const SAT_TILES =
   "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
-const TileSwitch = ({ tileUrl }) => {
-  const map = useMap();
-  return null;
-};
+// Utility functions for filtering
+const filterByLocation = (items) => items.filter((item) => item.location?.coordinates);
+const filterMissionsByArea = (missions) => missions.filter((m) => m.area?.coordinates?.[0]?.length);
+
+// Control button configuration
+const CONTROL_BUTTONS = [
+  { key: "assets", label: "Assets", stateKey: "showAssets" },
+  { key: "missions", label: "Missions", stateKey: "showMissions" },
+  { key: "zones", label: "Zones", stateKey: "showZones" },
+  { key: "satellite", label: "Satellite", stateKey: "useSatellite", icon: "🛰️" },
+];
+
+const ControlButton = ({ active, onClick, label, icon }) => (
+  <button
+    className={`${styles.controlBtn} ${active ? styles.controlBtnActive : ""}`}
+    onClick={onClick}
+  >
+    {icon ? `${icon} ` : ""}{active ? "✓" : "○"} {label}
+  </button>
+);
 
 const MapContent = () => {
   const { missions } = useMissions();
@@ -86,6 +102,18 @@ const MapContent = () => {
   const [useSatellite, setUseSatellite] = useState(false);
 
   const center = [32.08, 34.78]; // Default center
+
+  // Memoize filtered data to avoid unnecessary recalculations
+  const assetsWithLocation = useMemo(() => filterByLocation(assets), [assets]);
+  const missionsWithLocation = useMemo(() => filterByLocation(missions), [missions]);
+  const missionsWithArea = useMemo(() => filterMissionsByArea(missions), [missions]);
+  const assetCounts = useMemo(
+    () => assets.reduce((acc, a) => {
+      acc[a.type] = (acc[a.type] || 0) + 1;
+      return acc;
+    }, {}),
+    [assets]
+  );
 
   return (
     <div className={styles.mapWrap}>
@@ -104,9 +132,7 @@ const MapContent = () => {
 
         {/* Mission zones */}
         {showZones &&
-          missions
-            .filter((m) => m.area?.coordinates?.[0]?.length)
-            .map((mission) => (
+          missionsWithArea.map((mission) => (
               <Polygon
                 key={`zone-${mission._id}`}
                 positions={mission.area.coordinates[0].map(([lng, lat]) => [
@@ -135,9 +161,7 @@ const MapContent = () => {
 
         {/* Mission markers */}
         {showMissions &&
-          missions
-            .filter((m) => m.location?.coordinates)
-            .map((mission) => (
+          missionsWithLocation.map((mission) => (
               <Marker
                 key={`mission-${mission._id}`}
                 position={[
@@ -161,9 +185,7 @@ const MapContent = () => {
 
         {/* Asset markers */}
         {showAssets &&
-          assets
-            .filter((a) => a.location?.coordinates)
-            .map((asset) => (
+          assetsWithLocation.map((asset) => (
               <Marker
                 key={`asset-${asset._id}`}
                 position={[
@@ -188,30 +210,27 @@ const MapContent = () => {
 
       {/* Map controls */}
       <div className={styles.controls}>
-        <button
-          className={`${styles.controlBtn} ${showAssets ? styles.controlBtnActive : ""}`}
+        <ControlButton
+          active={showAssets}
           onClick={() => setShowAssets(!showAssets)}
-        >
-          {showAssets ? "✓" : "○"} Assets
-        </button>
-        <button
-          className={`${styles.controlBtn} ${showMissions ? styles.controlBtnActive : ""}`}
+          label="Assets"
+        />
+        <ControlButton
+          active={showMissions}
           onClick={() => setShowMissions(!showMissions)}
-        >
-          {showMissions ? "✓" : "○"} Missions
-        </button>
-        <button
-          className={`${styles.controlBtn} ${showZones ? styles.controlBtnActive : ""}`}
+          label="Missions"
+        />
+        <ControlButton
+          active={showZones}
           onClick={() => setShowZones(!showZones)}
-        >
-          {showZones ? "✓" : "○"} Zones
-        </button>
-        <button
-          className={`${styles.controlBtn} ${useSatellite ? styles.controlBtnActive : ""}`}
+          label="Zones"
+        />
+        <ControlButton
+          active={useSatellite}
           onClick={() => setUseSatellite(!useSatellite)}
-        >
-          🛰️ {useSatellite ? "Dark" : "Satellite"}
-        </button>
+          label="Satellite"
+          icon="🛰️"
+        />
       </div>
 
       {/* Legend */}

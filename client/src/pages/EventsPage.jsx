@@ -54,7 +54,8 @@ const EventsContent = () => {
 
   if (loading) return <Spinner />;
 
-  const filtered = filter === "All" ? events : events.filter((e) => e.type === filter);
+  const filtered =
+    filter === "All" ? events : events.filter((e) => e.type === filter);
 
   return (
     <>
@@ -72,9 +73,15 @@ const EventsContent = () => {
             key={type}
             className={`${styles.filterBtn} ${filter === type ? styles.filterBtnActive : ""}`}
             onClick={() => setFilter(type)}
-            style={filter === type && type !== "All" ? { borderColor: EVENT_COLORS[type], color: EVENT_COLORS[type] } : {}}
+            style={
+              filter === type && type !== "All"
+                ? { borderColor: EVENT_COLORS[type], color: EVENT_COLORS[type] }
+                : {}
+            }
           >
-            {type === "All" ? "All" : `${EVENT_ICONS[type] || "●"} ${EVENT_LABELS[type]}`}
+            {type === "All"
+              ? "All"
+              : `${EVENT_ICONS[type] || "●"} ${EVENT_LABELS[type]}`}
           </button>
         ))}
       </div>
@@ -93,9 +100,17 @@ const EventsContent = () => {
                 transition={{ delay: i * 0.02 }}
                 layout
               >
-                <div className={styles.timelineLine} style={{ background: color }} />
-                <div className={styles.timelineDot} style={{ background: color, boxShadow: `0 0 8px ${color}80` }}>
-                  <span className={styles.timelineDotIcon}>{EVENT_ICONS[event.type] || "●"}</span>
+                <div
+                  className={styles.timelineLine}
+                  style={{ background: color }}
+                />
+                <div
+                  className={styles.timelineDot}
+                  style={{ background: color, boxShadow: `0 0 8px ${color}80` }}
+                >
+                  <span className={styles.timelineDotIcon}>
+                    {EVENT_ICONS[event.type] || "●"}
+                  </span>
                 </div>
                 <div className={styles.timelineCard}>
                   <div className={styles.timelineCardHeader}>
@@ -113,7 +128,9 @@ const EventsContent = () => {
                   </div>
                   <div className={styles.timelineDesc}>{event.description}</div>
                   {event.createdBy?.username && (
-                    <div className={styles.timelineBy}>by {event.createdBy.username}</div>
+                    <div className={styles.timelineBy}>
+                      by {event.createdBy.username}
+                    </div>
                   )}
                 </div>
               </motion.div>
