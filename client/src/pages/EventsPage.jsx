@@ -6,7 +6,6 @@ import {
   HiOutlineExclamation,
   HiOutlineCog,
 } from "react-icons/hi";
-import { motion, AnimatePresence } from "framer-motion";
 import { useEvents } from "../hooks/useEvents";
 import { Spinner } from "../components/ui/Loader";
 import styles from "./EventsPage.module.css";

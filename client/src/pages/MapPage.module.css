@@ -325,6 +325,8 @@
   border-radius: 4px;
   padding: 1px 5px;
   color: var(--accent-cyan, #06b6d4);
+}
+
 .assetPanel {
   position: absolute;
   top: 80px;
