@@ -58,7 +58,7 @@ export const useMissions = () => {
       socket.off("mission:statusChanged", onStatusChanged);
       socket.off("mission:deleted", onDeleted);
     };
-  }, [socket, queryClient]);
+  }, [socket, queryClient, addNotification]);
 
   return {
     missions: query.data ?? [],

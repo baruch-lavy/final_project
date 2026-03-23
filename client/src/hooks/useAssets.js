@@ -59,7 +59,7 @@ export const useAssets = () => {
       socket.off("asset:locationUpdated", onLocationUpdated);
       socket.off("asset:deleted", onDeleted);
     };
-  }, [socket, queryClient]);
+  }, [socket, queryClient, addNotification]);
 
   return {
     assets: query.data ?? [],
