@@ -8,6 +8,7 @@ import {
   HiOutlineChatAlt2,
   HiOutlineLogout,
   HiOutlineClipboardList,
+  HiOutlineUsers,
 } from "react-icons/hi";
 import styles from "./Sidebar.module.css";
 
@@ -17,6 +18,7 @@ const navItems = [
   { to: "/missions", icon: <HiOutlineFlag />, label: "Missions" },
   { to: "/assets", icon: <HiOutlineTruck />, label: "Assets" },
   { to: "/events", icon: <HiOutlineClipboardList />, label: "Activity Log" },
+  { to: "/personnel", icon: <HiOutlineUsers />, label: "Personnel" },
 ];
 
 const Sidebar = () => {

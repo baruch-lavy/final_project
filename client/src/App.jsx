@@ -5,6 +5,7 @@ import { useAuthStore } from "./stores/authStore";
 import { useSocketStore } from "./stores/socketStore";
 import AppLayout from "./components/layout/AppLayout";
 import { Spinner } from "./components/ui/Loader";
+import ToastContainer from "./components/ui/ToastContainer";
 
 // Lazy-loaded pages
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -14,6 +15,7 @@ const AssetsPage = lazy(() => import("./pages/AssetsPage"));
 const MapPage = lazy(() => import("./pages/MapPage"));
 const EventsPage = lazy(() => import("./pages/EventsPage"));
 const ChatPage = lazy(() => import("./pages/ChatPage"));
+const PersonnelPage = lazy(() => import("./pages/PersonnelPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -80,6 +82,7 @@ const AppRoutes = () => {
           <Route path="map" element={<MapPage />} />
           <Route path="events" element={<EventsPage />} />
           <Route path="chat" element={<ChatPage />} />
+          <Route path="personnel" element={<PersonnelPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
@@ -92,6 +95,7 @@ const App = () => (
     <BrowserRouter>
       <AppRoutes />
     </BrowserRouter>
+    <ToastContainer />
   </QueryClientProvider>
 );
 

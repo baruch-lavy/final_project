@@ -118,6 +118,8 @@ npm run simulate    # (separate terminal) Moves assets on the map in real-time
 - Asset movement simulation script
 - Seed script with demo data
 - ES Modules throughout backend
+- Toast notifications for real-time alerts (Framer Motion, 5 variants, auto-dismiss, wired to socket events)
+- Personnel page (card grid, online/offline status via socket, role icons/colors)
 
 ### 🔲 Not Yet Done / Planned
 - **Google Maps 3D integration** — currently using Leaflet. Was requested to migrate to Google Maps with 3D view. This requires:
@@ -128,7 +130,6 @@ npm run simulate    # (separate terminal) Moves assets on the map in real-time
 - Role-based UI restrictions (backend has role checks, frontend doesn't fully enforce)
 - Map drawing tools for creating mission area polygons
 - Marker clustering when zoomed out
-- Toast notifications for real-time alerts
 - Loading skeletons (Framer Motion)
 - Connection status indicator (socket connected/disconnected)
 - Animated polylines showing asset movement paths

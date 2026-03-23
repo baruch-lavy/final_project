@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../services/api";
 import { useSocketStore } from "../stores/socketStore";
+import { useUIStore } from "../stores/uiStore";
 
 const ASSETS_KEY = ["assets"];
 
@@ -13,6 +14,7 @@ const fetchAssets = async () => {
 export const useAssets = () => {
   const queryClient = useQueryClient();
   const socket = useSocketStore((s) => s.socket);
+  const addNotification = useUIStore((s) => s.addNotification);
 
   const query = useQuery({
     queryKey: ASSETS_KEY,
@@ -26,6 +28,7 @@ export const useAssets = () => {
 
     const onCreated = (asset) => {
       queryClient.setQueryData(ASSETS_KEY, (old = []) => [...old, asset]);
+      addNotification({ type: "success", title: "Asset Added", message: `"${asset.name}" added to theater` });
     };
     const onUpdated = (asset) => {
       queryClient.setQueryData(ASSETS_KEY, (old = []) =>
