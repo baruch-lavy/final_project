@@ -1,4 +1,4 @@
-import { use, Suspense } from "react";
+import { use, Suspense, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   PieChart,
@@ -105,13 +105,15 @@ const getThreatLevel = (missions = []) => {
   return { level: "LOW", color: "#10b981", value: 20 };
 };
 
-// Generate fake trend data for the last 7 days
+// Generate stable trend data for the last 7 days (memoized to avoid re-render flicker)
 const generateTrendData = (totalMissions = 0) => {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Today"];
   const base = Math.max(1, totalMissions - 6);
+  // Use deterministic offsets so chart stays stable across re-renders
+  const offsets = [0, 1, 1, 2, 2, 3, 3];
   return days.map((day, i) => ({
     day,
-    missions: base + i + Math.floor(Math.random() * 2),
+    missions: base + i + offsets[i],
     active: Math.floor((base + i) * 0.4),
   }));
 };
@@ -127,7 +129,7 @@ const DashboardContent = () => {
   const missionStatusData = (stats.missionsByStatus || []).map(({ _id, count }) => ({ name: _id, value: count }));
   const assetTypeData = (stats.assetsByType || []).map(({ _id, count }) => ({ name: _id, value: count }));
   const assetStatusData = (stats.assetsByStatus || []).map(({ _id, count }) => ({ name: _id, value: count }));
-  const trendData = generateTrendData(stats.totalMissions);
+  const trendData = useMemo(() => generateTrendData(stats.totalMissions), [stats.totalMissions]);
   const threat = getThreatLevel(missions);
 
   return (

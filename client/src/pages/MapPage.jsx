@@ -103,15 +103,17 @@ const SAT_TILES = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Im
 const useAssetTrails = (assets) => {
   const trailsRef = useRef({});
 
-  assets.forEach((asset) => {
-    if (!asset.location?.coordinates) return;
-    const [lng, lat] = asset.location.coordinates;
-    const trail = trailsRef.current[asset._id] || [];
-    const last = trail[trail.length - 1];
-    if (!last || last[0] !== lat || last[1] !== lng) {
-      trailsRef.current[asset._id] = [...trail, [lat, lng]].slice(-8);
-    }
-  });
+  useEffect(() => {
+    assets.forEach((asset) => {
+      if (!asset.location?.coordinates) return;
+      const [lng, lat] = asset.location.coordinates;
+      const trail = trailsRef.current[asset._id] || [];
+      const last = trail[trail.length - 1];
+      if (!last || last[0] !== lat || last[1] !== lng) {
+        trailsRef.current[asset._id] = [...trail, [lat, lng]].slice(-8);
+      }
+    });
+  }, [assets]);
 
   return trailsRef.current;
 };
