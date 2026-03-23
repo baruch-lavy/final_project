@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { getSocket } from "../services/socket";
 
-export const useSocketStore = create((set, get) => ({
+export const useSocketStore = create((set) => ({
   socket: null,
   connected: false,
 

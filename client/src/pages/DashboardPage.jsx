@@ -1,5 +1,5 @@
-import { use, Suspense } from "react";
-import { motion } from "framer-motion";
+import { Suspense } from "react";
+import { motion } from "framer-motion"; // eslint-disable-line no-unused-vars
 import {
   PieChart,
   Pie,
