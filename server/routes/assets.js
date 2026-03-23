@@ -1,6 +1,6 @@
-const router = require("express").Router();
-const { auth, authorize } = require("../middleware/auth");
-const {
+import { Router } from "express";
+import { auth, authorize } from "../middleware/auth.js";
+import {
   getAssets,
   getAsset,
   createAsset,
@@ -8,7 +8,9 @@ const {
   updateAssetLocation,
   deleteAsset,
   getAssetStats,
-} = require("../controllers/assetController");
+} from "../controllers/assetController.js";
+
+const router = Router();
 
 router.use(auth);
 
@@ -24,4 +26,4 @@ router.put(
 );
 router.delete("/:id", authorize("Commander"), deleteAsset);
 
-module.exports = router;
+export default router;

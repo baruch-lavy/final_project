@@ -1,6 +1,6 @@
-require("dotenv").config();
-const mongoose = require("mongoose");
-const Asset = require("../models/Asset");
+import "dotenv/config";
+import mongoose from "mongoose";
+import Asset from "../models/Asset.js";
 
 // Simulates real-time asset movement on the map
 const simulate = async () => {
@@ -9,8 +9,7 @@ const simulate = async () => {
     console.log("🎯 Asset simulation started - assets are now moving");
 
     // Connect to Socket.IO server as a client to broadcast updates
-    const { io } = require("socket.io-client");
-    // We'll directly update DB and let the frontend poll or use its own connection
+    // Directly update DB and let the frontend poll or use its own connection
 
     const moveAsset = (coords, maxDelta = 0.002) => {
       const lng = coords[0] + (Math.random() - 0.5) * maxDelta;

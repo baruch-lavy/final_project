@@ -1,7 +1,7 @@
-const Asset = require("../models/Asset");
-const Event = require("../models/Event");
+import Asset from "../models/Asset.js";
+import Event from "../models/Event.js";
 
-exports.getAssets = async (req, res, next) => {
+export const getAssets = async (req, res, next) => {
   try {
     const { type, status } = req.query;
     const filter = {};
@@ -17,7 +17,7 @@ exports.getAssets = async (req, res, next) => {
   }
 };
 
-exports.getAsset = async (req, res, next) => {
+export const getAsset = async (req, res, next) => {
   try {
     const asset = await Asset.findById(req.params.id).populate(
       "assignedMission",
@@ -32,7 +32,7 @@ exports.getAsset = async (req, res, next) => {
   }
 };
 
-exports.createAsset = async (req, res, next) => {
+export const createAsset = async (req, res, next) => {
   try {
     const asset = await Asset.create(req.body);
     const populated = await Asset.findById(asset._id).populate(
@@ -64,7 +64,7 @@ exports.createAsset = async (req, res, next) => {
   }
 };
 
-exports.updateAsset = async (req, res, next) => {
+export const updateAsset = async (req, res, next) => {
   try {
     const asset = await Asset.findByIdAndUpdate(
       req.params.id,
@@ -94,7 +94,7 @@ exports.updateAsset = async (req, res, next) => {
   }
 };
 
-exports.updateAssetLocation = async (req, res, next) => {
+export const updateAssetLocation = async (req, res, next) => {
   try {
     const { coordinates } = req.body;
     const asset = await Asset.findByIdAndUpdate(
@@ -123,7 +123,7 @@ exports.updateAssetLocation = async (req, res, next) => {
   }
 };
 
-exports.deleteAsset = async (req, res, next) => {
+export const deleteAsset = async (req, res, next) => {
   try {
     const asset = await Asset.findByIdAndDelete(req.params.id);
     if (!asset) {
@@ -147,7 +147,7 @@ exports.deleteAsset = async (req, res, next) => {
   }
 };
 
-exports.getAssetStats = async (req, res, next) => {
+export const getAssetStats = async (req, res, next) => {
   try {
     const [typeStats, statusStats, totalAssets] = await Promise.all([
       Asset.aggregate([{ $group: { _id: "$type", count: { $sum: 1 } } }]),

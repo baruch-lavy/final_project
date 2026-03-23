@@ -1,11 +1,16 @@
-require("dotenv").config();
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-const cors = require("cors");
-const connectDB = require("./config/db");
-const errorHandler = require("./middleware/errorHandler");
-const setupSocket = require("./socket/socketHandler");
+import "dotenv/config";
+import express from "express";
+import http from "http";
+import { Server } from "socket.io";
+import cors from "cors";
+import connectDB from "./config/db.js";
+import errorHandler from "./middleware/errorHandler.js";
+import setupSocket from "./socket/socketHandler.js";
+import authRoutes from "./routes/auth.js";
+import missionRoutes from "./routes/missions.js";
+import assetRoutes from "./routes/assets.js";
+import messageRoutes from "./routes/messages.js";
+import eventRoutes from "./routes/events.js";
 
 // Connect to database
 connectDB();
@@ -39,11 +44,11 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 
 // Routes
-app.use("/api/auth", require("./routes/auth"));
-app.use("/api/missions", require("./routes/missions"));
-app.use("/api/assets", require("./routes/assets"));
-app.use("/api/messages", require("./routes/messages"));
-app.use("/api/events", require("./routes/events"));
+app.use("/api/auth", authRoutes);
+app.use("/api/missions", missionRoutes);
+app.use("/api/assets", assetRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/events", eventRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

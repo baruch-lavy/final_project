@@ -1,6 +1,6 @@
-const Message = require("../models/Message");
+import Message from "../models/Message.js";
 
-exports.getMessages = async (req, res, next) => {
+export const getMessages = async (req, res, next) => {
   try {
     const { channel } = req.params;
     const messages = await Message.find({ channel })
@@ -13,7 +13,7 @@ exports.getMessages = async (req, res, next) => {
   }
 };
 
-exports.sendMessage = async (req, res, next) => {
+export const sendMessage = async (req, res, next) => {
   try {
     const { channel, content, type } = req.body;
     const message = await Message.create({
@@ -39,7 +39,7 @@ exports.sendMessage = async (req, res, next) => {
   }
 };
 
-exports.getChannels = async (req, res, next) => {
+export const getChannels = async (req, res, next) => {
   try {
     const channels = await Message.distinct("channel");
     res.json(channels);

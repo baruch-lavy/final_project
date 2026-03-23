@@ -1,8 +1,8 @@
-const { validationResult } = require("express-validator");
-const Mission = require("../models/Mission");
-const Event = require("../models/Event");
+import { validationResult } from "express-validator";
+import Mission from "../models/Mission.js";
+import Event from "../models/Event.js";
 
-exports.getMissions = async (req, res, next) => {
+export const getMissions = async (req, res, next) => {
   try {
     const { status, priority } = req.query;
     const filter = {};
@@ -19,7 +19,7 @@ exports.getMissions = async (req, res, next) => {
   }
 };
 
-exports.getMission = async (req, res, next) => {
+export const getMission = async (req, res, next) => {
   try {
     const mission = await Mission.findById(req.params.id)
       .populate("createdBy", "username role")
@@ -34,7 +34,7 @@ exports.getMission = async (req, res, next) => {
   }
 };
 
-exports.createMission = async (req, res, next) => {
+export const createMission = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -74,7 +74,7 @@ exports.createMission = async (req, res, next) => {
   }
 };
 
-exports.updateMission = async (req, res, next) => {
+export const updateMission = async (req, res, next) => {
   try {
     const mission = await Mission.findByIdAndUpdate(
       req.params.id,
@@ -112,7 +112,7 @@ exports.updateMission = async (req, res, next) => {
   }
 };
 
-exports.updateMissionStatus = async (req, res, next) => {
+export const updateMissionStatus = async (req, res, next) => {
   try {
     const { status } = req.body;
     const mission = await Mission.findByIdAndUpdate(
@@ -151,7 +151,7 @@ exports.updateMissionStatus = async (req, res, next) => {
   }
 };
 
-exports.addMissionUpdate = async (req, res, next) => {
+export const addMissionUpdate = async (req, res, next) => {
   try {
     const { message } = req.body;
     const mission = await Mission.findByIdAndUpdate(
@@ -182,7 +182,7 @@ exports.addMissionUpdate = async (req, res, next) => {
   }
 };
 
-exports.deleteMission = async (req, res, next) => {
+export const deleteMission = async (req, res, next) => {
   try {
     const mission = await Mission.findByIdAndDelete(req.params.id);
     if (!mission) {
@@ -212,7 +212,7 @@ exports.deleteMission = async (req, res, next) => {
   }
 };
 
-exports.getMissionStats = async (req, res, next) => {
+export const getMissionStats = async (req, res, next) => {
   try {
     const [statusStats, priorityStats, totalMissions] = await Promise.all([
       Mission.aggregate([{ $group: { _id: "$status", count: { $sum: 1 } } }]),
