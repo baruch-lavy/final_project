@@ -43,6 +43,16 @@ const setupSocket = (io) => {
       socket.leave(`channel:${channel}`);
     });
 
+    // Broadcast alert from commander
+    socket.on("alert:broadcast", ({ message, from }) => {
+      if (socket.user.role !== "Commander") return;
+      io.emit("alert:received", {
+        message,
+        from: from || socket.user.username,
+        timestamp: new Date(),
+      });
+    });
+
     // Handle disconnect
     socket.on("disconnect", async () => {
       console.log(`⚡ ${socket.user.username} disconnected`);

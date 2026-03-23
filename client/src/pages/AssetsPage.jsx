@@ -1,5 +1,5 @@
 import { useState, useActionState, Suspense } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion"; // eslint-disable-line no-unused-vars
 import { HiOutlinePlus, HiOutlineLocationMarker } from "react-icons/hi";
 import {
   useAssets,

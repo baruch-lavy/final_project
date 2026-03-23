@@ -1,116 +1,130 @@
 import { useState, Suspense } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion"; // eslint-disable-line no-unused-vars
 import {
   HiOutlineLightningBolt,
   HiOutlineTruck,
   HiOutlineExclamation,
   HiOutlineCog,
 } from "react-icons/hi";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEvents } from "../hooks/useEvents";
-import Badge from "../components/ui/Badge";
 import { Spinner } from "../components/ui/Loader";
 import styles from "./EventsPage.module.css";
 
-const FILTERS = ["All", "Mission", "Asset", "Alert", "System"];
-
-const getEventCategory = (type) => {
-  if (type?.startsWith("mission")) return "Mission";
-  if (type?.startsWith("asset")) return "Asset";
-  if (type?.includes("alert")) return "Alert";
-  return "System";
+const EVENT_COLORS = {
+  mission_created: "#3b82f6",
+  mission_updated: "#06b6d4",
+  mission_status_changed: "#10b981",
+  mission_deleted: "#ef4444",
+  asset_created: "#8b5cf6",
+  asset_moved: "#f59e0b",
+  asset_status_changed: "#f59e0b",
+  alert: "#ef4444",
+  user_login: "#10b981",
 };
 
-const ICONS = {
-  Mission: HiOutlineLightningBolt,
-  Asset: HiOutlineTruck,
-  Alert: HiOutlineExclamation,
-  System: HiOutlineCog,
+const EVENT_LABELS = {
+  mission_created: "Mission Created",
+  mission_updated: "Mission Updated",
+  mission_status_changed: "Status Change",
+  mission_deleted: "Mission Deleted",
+  asset_created: "Asset Added",
+  asset_moved: "Asset Moved",
+  asset_status_changed: "Asset Status",
+  alert: "Alert",
+  user_login: "User Login",
 };
 
-const EventRow = ({ event, index }) => {
-  const cat = getEventCategory(event.type);
-  const Icon = ICONS[cat] || HiOutlineCog;
-
-  return (
-    <motion.div
-      className={styles.eventRow}
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.03 }}
-    >
-      <div className={`${styles.eventIcon} ${styles[cat.toLowerCase()]}`}>
-        <Icon />
-      </div>
-      <div className={styles.eventBody}>
-        <div className={styles.eventDesc}>{event.description}</div>
-        <div className={styles.eventMeta}>
-          <Badge variant={cat}>{event.type?.replace(/_/g, " ")}</Badge>
-          {event.createdBy?.username && <span>{event.createdBy.username}</span>}
-        </div>
-      </div>
-      <div className={styles.eventTime}>
-        {new Date(event.createdAt).toLocaleString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
-      </div>
-    </motion.div>
-  );
+const EVENT_ICONS = {
+  mission_created: "🚩",
+  mission_updated: "✏️",
+  mission_status_changed: "🔄",
+  mission_deleted: "🗑️",
+  asset_created: "📦",
+  asset_moved: "📍",
+  asset_status_changed: "⚡",
+  alert: "⚠️",
+  user_login: "👤",
 };
+
+const ALL_TYPES = ["All", ...Object.keys(EVENT_LABELS)];
 
 const EventsContent = () => {
-  const { events, loading } = useEvents();
+  const { events, loading } = useEvents(100);
   const [filter, setFilter] = useState("All");
 
-  const filtered =
-    filter === "All"
-      ? events
-      : events.filter((e) => getEventCategory(e.type) === filter);
-
   if (loading) return <Spinner />;
+
+  const filtered = filter === "All" ? events : events.filter((e) => e.type === filter);
 
   return (
     <>
       <div className={styles.header}>
-        <span className={styles.title}>
-          {filtered.length} event{filtered.length !== 1 ? "s" : ""}
-        </span>
+        <span className={styles.title}>{filtered.length} events</span>
+        <div className={styles.liveIndicator}>
+          <div className={styles.liveDot} />
+          LIVE
+        </div>
       </div>
 
-      <div className={styles.filters}>
-        {FILTERS.map((f) => (
+      <div className={styles.filterScroll}>
+        {ALL_TYPES.map((type) => (
           <button
-            key={f}
-            className={`${styles.filterBtn} ${filter === f ? styles.filterBtnActive : ""}`}
-            onClick={() => setFilter(f)}
+            key={type}
+            className={`${styles.filterBtn} ${filter === type ? styles.filterBtnActive : ""}`}
+            onClick={() => setFilter(type)}
+            style={filter === type && type !== "All" ? { borderColor: EVENT_COLORS[type], color: EVENT_COLORS[type] } : {}}
           >
-            {f}
+            {type === "All" ? "All" : `${EVENT_ICONS[type] || "●"} ${EVENT_LABELS[type]}`}
           </button>
         ))}
       </div>
 
-      <div className={styles.list}>
-        <AnimatePresence>
-          {filtered.map((event, i) => (
-            <EventRow key={event._id} event={event} index={i} />
-          ))}
+      <div className={styles.timeline}>
+        <AnimatePresence mode="popLayout">
+          {filtered.map((event, i) => {
+            const color = EVENT_COLORS[event.type] || "#6b7280";
+            return (
+              <motion.div
+                key={event._id || i}
+                className={styles.timelineItem}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ delay: i * 0.02 }}
+                layout
+              >
+                <div className={styles.timelineLine} style={{ background: color }} />
+                <div className={styles.timelineDot} style={{ background: color, boxShadow: `0 0 8px ${color}80` }}>
+                  <span className={styles.timelineDotIcon}>{EVENT_ICONS[event.type] || "●"}</span>
+                </div>
+                <div className={styles.timelineCard}>
+                  <div className={styles.timelineCardHeader}>
+                    <span className={styles.timelineType} style={{ color }}>
+                      {EVENT_LABELS[event.type] || event.type}
+                    </span>
+                    <span className={styles.timelineTime}>
+                      {new Date(event.createdAt).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                  <div className={styles.timelineDesc}>{event.description}</div>
+                  {event.createdBy?.username && (
+                    <div className={styles.timelineBy}>by {event.createdBy.username}</div>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
+        {filtered.length === 0 && (
+          <div className={styles.empty}>No events found</div>
+        )}
       </div>
-
-      {filtered.length === 0 && (
-        <div
-          style={{
-            textAlign: "center",
-            color: "var(--text-muted)",
-            padding: 40,
-            fontSize: 14,
-          }}
-        >
-          No events recorded
-        </div>
-      )}
     </>
   );
 };

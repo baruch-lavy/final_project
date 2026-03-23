@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion"; // eslint-disable-line no-unused-vars
 import { HiOutlineX } from "react-icons/hi";
 import { useMessages, useSendMessage } from "../../hooks/useMessages";
 import { useAuthStore } from "../../stores/authStore";

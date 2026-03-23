@@ -1,0 +1,162 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.headerStats {
+  display: flex;
+  gap: 12px;
+}
+
+.statBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.statDotGreen {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 6px var(--accent-green);
+}
+
+.statDotGray {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: border-color 150ms ease, transform 150ms ease;
+  cursor: default;
+}
+
+.card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-2px);
+}
+
+.avatarWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.statusDot {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-secondary);
+}
+
+.statusOnline {
+  background: var(--accent-green);
+  box-shadow: 0 0 6px var(--accent-green);
+  animation: pulse-status 2s ease-in-out infinite;
+}
+
+.statusOffline {
+  background: var(--text-muted);
+}
+
+@keyframes pulse-status {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 2px;
+}
+
+.email {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.onlineLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.onlineLabelActive {
+  color: var(--accent-green);
+}
+
+.empty {
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 20px 0;
+}

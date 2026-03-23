@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { HiX } from "react-icons/hi";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion"; // eslint-disable-line no-unused-vars
 import styles from "./Modal.module.css";
 
 const Modal = ({ isOpen, onClose, title, children, footer }) => {
