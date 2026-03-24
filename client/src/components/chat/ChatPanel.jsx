@@ -1,13 +1,66 @@
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion"; // eslint-disable-line no-unused-vars
+import { useState, useRef, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { HiOutlineX } from "react-icons/hi";
-import { useMessages, useSendMessage } from "../../hooks/useMessages";
+import {
+  useMessages,
+  useSendMessage,
+  useTypingIndicator,
+  useReactToMessage,
+} from "../../hooks/useMessages";
 import { useAuthStore } from "../../stores/authStore";
 import { useUIStore } from "../../stores/uiStore";
 import Button from "../ui/Button";
 import styles from "./ChatPanel.module.css";
 
 const CHANNELS = ["general", "operations", "alerts"];
+const QUICK_REACTIONS = ["\u{1F44D}", "\u{2764}\u{FE0F}", "\u{1F680}", "\u{2705}", "\u{26A0}\u{FE0F}"];
+
+const ReactionBar = ({ reactions = [], onReact, userId }) => {
+  const grouped = {};
+  for (const r of reactions) {
+    if (!grouped[r.emoji]) grouped[r.emoji] = [];
+    grouped[r.emoji].push(r.user);
+  }
+
+  return (
+    <div className={styles.reactions}>
+      {Object.entries(grouped).map(([emoji, users]) => (
+        <button
+          key={emoji}
+          className={`${styles.reactionChip} ${users.includes(userId) ? styles.reactionChipOwn : ""}`}
+          onClick={() => onReact(emoji)}
+        >
+          {emoji} {users.length}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+const TypingIndicator = ({ users }) => {
+  if (users.length === 0) return null;
+  const names = users.map((u) => u.username);
+  const text =
+    names.length === 1
+      ? `${names[0]} is typing`
+      : names.length <= 3
+        ? `${names.join(", ")} are typing`
+        : "Several people are typing";
+
+  return (
+    <motion.div
+      className={styles.typingBar}
+      initial={{ opacity: 0, y: 4 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 4 }}
+    >
+      <span className={styles.typingDots}>
+        <span /><span /><span />
+      </span>
+      {text}
+    </motion.div>
+  );
+};
 
 const ChatPanel = () => {
   const chatOpen = useUIStore((s) => s.chatOpen);
@@ -15,20 +68,44 @@ const ChatPanel = () => {
   const [channel, setChannel] = useState("general");
   const { messages } = useMessages(channel);
   const sendMessage = useSendMessage();
+  const { typingUsers, emitTyping } = useTypingIndicator(channel);
+  const reactToMessage = useReactToMessage();
   const user = useAuthStore((s) => s.user);
   const [text, setText] = useState("");
+  const [reactionMsgId, setReactionMsgId] = useState(null);
   const endRef = useRef(null);
+  const typingTimeout = useRef(null);
 
   useEffect(() => {
     if (chatOpen) endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, chatOpen]);
+
+  const handleTextChange = useCallback(
+    (e) => {
+      setText(e.target.value);
+      emitTyping(true);
+      clearTimeout(typingTimeout.current);
+      typingTimeout.current = setTimeout(() => emitTyping(false), 2000);
+    },
+    [emitTyping],
+  );
 
   const handleSend = (e) => {
     e.preventDefault();
     if (!text.trim()) return;
     sendMessage.mutate({ channel, content: text.trim() });
     setText("");
+    emitTyping(false);
+    clearTimeout(typingTimeout.current);
   };
+
+  const handleReact = useCallback(
+    (msgId, emoji) => {
+      reactToMessage(msgId, emoji);
+      setReactionMsgId(null);
+    },
+    [reactToMessage],
+  );
 
   return (
     <AnimatePresence>
@@ -74,6 +151,9 @@ const ChatPanel = () => {
                   <div
                     key={msg._id}
                     className={`${styles.msg} ${isOwn ? styles.msgOwn : styles.msgOther}`}
+                    onDoubleClick={() =>
+                      setReactionMsgId(reactionMsgId === msg._id ? null : msg._id)
+                    }
                   >
                     {!isOwn && (
                       <div className={styles.msgSender}>
@@ -87,16 +167,49 @@ const ChatPanel = () => {
                         minute: "2-digit",
                       })}
                     </div>
+
+                    {msg.reactions?.length > 0 && (
+                      <ReactionBar
+                        reactions={msg.reactions}
+                        onReact={(emoji) => handleReact(msg._id, emoji)}
+                        userId={user?._id}
+                      />
+                    )}
+
+                    <AnimatePresence>
+                      {reactionMsgId === msg._id && (
+                        <motion.div
+                          className={styles.reactionPicker}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.8 }}
+                        >
+                          {QUICK_REACTIONS.map((emoji) => (
+                            <button
+                              key={emoji}
+                              className={styles.reactionPickerBtn}
+                              onClick={() => handleReact(msg._id, emoji)}
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 );
               })}
               <div ref={endRef} />
             </div>
 
+            <AnimatePresence>
+              <TypingIndicator users={typingUsers} />
+            </AnimatePresence>
+
             <form className={styles.inputArea} onSubmit={handleSend}>
               <input
                 value={text}
-                onChange={(e) => setText(e.target.value)}
+                onChange={handleTextChange}
                 placeholder={`Message #${channel}...`}
                 autoFocus
               />

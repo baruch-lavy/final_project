@@ -1,0 +1,49 @@
+.wrap {
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+}
+
+.title {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.clocks {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+}
+
+.zone {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.zoneLabel {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--accent-cyan);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.zoneTime {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: "Courier New", monospace;
+  color: var(--text-bright);
+  letter-spacing: 1px;
+}
+
+.zoneDate {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}

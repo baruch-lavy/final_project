@@ -1,0 +1,101 @@
+.ticker {
+  position: fixed;
+  bottom: 0;
+  left: var(--sidebar-width);
+  right: 0;
+  height: var(--ticker-height, 28px);
+  background: rgba(6, 10, 19, 0.92);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  z-index: 90;
+  overflow: hidden;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+}
+
+.ticker::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent-cyan, #22d3ee) 30%,
+    var(--accent-blue) 70%,
+    transparent
+  );
+  opacity: 0.3;
+}
+
+.tickerFlash {
+  background: rgba(239, 68, 68, 0.12);
+  border-top-color: var(--accent-red);
+  animation: flash-bg 0.5s ease-in-out 3;
+}
+
+@keyframes flash-bg {
+  0%,
+  100% {
+    background: rgba(239, 68, 68, 0.08);
+  }
+  50% {
+    background: rgba(239, 68, 68, 0.18);
+  }
+}
+
+.label {
+  flex-shrink: 0;
+  padding: 0 12px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--accent-cyan, #22d3ee);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  height: 100%;
+  text-shadow: 0 0 8px var(--accent-cyan, #22d3ee);
+}
+
+.flashMsg {
+  padding: 0 16px;
+  color: var(--accent-red);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  animation: flash-text 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes flash-text {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.scrollWrap {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.scrollTrack {
+  display: flex;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.scrollText {
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+  padding: 0 8px;
+}

@@ -22,6 +22,16 @@ const messageSchema = new mongoose.Schema(
       enum: ["text", "alert", "system"],
       default: "text",
     },
+    reactions: [
+      {
+        emoji: { type: String, required: true },
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+      },
+    ],
   },
   { timestamps: true },
 );

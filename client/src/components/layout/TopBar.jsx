@@ -6,10 +6,15 @@ import {
   HiOutlineBell,
   HiOutlineX,
   HiOutlineSpeakerphone,
+  HiOutlineCheckCircle,
+  HiOutlineExclamation,
+  HiOutlineInformationCircle,
+  HiOutlineShieldCheck,
 } from "react-icons/hi";
 import { useSocketStore } from "../../stores/socketStore";
 import { useUIStore } from "../../stores/uiStore";
 import { useAuthStore } from "../../stores/authStore";
+import { useNotifications, useMarkRead, useMarkAllRead } from "../../hooks/useNotifications";
 import styles from "./TopBar.module.css";
 
 const pageTitles = {
@@ -22,36 +27,59 @@ const pageTitles = {
   "/chat": "Operations Chat",
 };
 
+const typeIcons = {
+  mission_assigned: HiOutlineShieldCheck,
+  mission_status: HiOutlineInformationCircle,
+  alert: HiOutlineExclamation,
+  mention: HiOutlineChatAlt2,
+  system: HiOutlineCheckCircle,
+};
+
+const typeColors = {
+  mission_assigned: "var(--accent-blue)",
+  mission_status: "var(--accent-cyan, #22d3ee)",
+  alert: "var(--accent-red)",
+  mention: "var(--accent-orange)",
+  system: "var(--accent-green)",
+};
+
+const formatTimeAgo = (dateStr) => {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+};
+
 const TopBar = () => {
   const { pathname } = useLocation();
   const connected = useSocketStore((s) => s.connected);
   const socket = useSocketStore((s) => s.socket);
   const toggleChat = useUIStore((s) => s.toggleChat);
-  const notifications = useUIStore((s) => s.notifications);
-  const clearNotification = useUIStore((s) => s.clearNotification);
   const user = useAuthStore((s) => s.user);
+  const { notifications, unreadCount, loading } = useNotifications();
+  const markRead = useMarkRead();
+  const markAllRead = useMarkAllRead();
   const [time, setTime] = useState(new Date());
   const [notifOpen, setNotifOpen] = useState(false);
   const [alertText, setAlertText] = useState("");
   const [alertOpen, setAlertOpen] = useState(false);
   const notifRef = useRef(null);
   const alertRef = useRef(null);
-  const unreadCount = notifications.length;
 
   useEffect(() => {
     const id = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e) => {
-      if (notifRef.current && !notifRef.current.contains(e.target)) {
+      if (notifRef.current && !notifRef.current.contains(e.target))
         setNotifOpen(false);
-      }
-      if (alertRef.current && !alertRef.current.contains(e.target)) {
+      if (alertRef.current && !alertRef.current.contains(e.target))
         setAlertOpen(false);
-      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -60,9 +88,20 @@ const TopBar = () => {
   const sendAlert = (e) => {
     e.preventDefault();
     if (!alertText.trim() || !socket) return;
-    socket.emit("alert:broadcast", { message: alertText.trim(), from: user?.username });
+    socket.emit("alert:broadcast", {
+      message: alertText.trim(),
+      from: user?.username,
+    });
     setAlertText("");
     setAlertOpen(false);
+  };
+
+  const handleMarkRead = (id) => {
+    markRead.mutate(id);
+  };
+
+  const handleMarkAllRead = () => {
+    markAllRead.mutate();
   };
 
   const title = pageTitles[pathname] || "AEGIS";
@@ -72,6 +111,7 @@ const TopBar = () => {
     <header className={styles.topbar}>
       <div className={styles.left}>
         <h1 className={styles.pageTitle}>{title}</h1>
+        <span className={styles.pageSub}>AEGIS C2 PLATFORM</span>
       </div>
       <div className={styles.right}>
         <span className={styles.time}>
@@ -83,15 +123,20 @@ const TopBar = () => {
         </span>
 
         <div className={styles.statusBadge}>
-          <span className={`${styles.statusDot} ${!connected ? styles.statusDotOff : ""}`} />
+          <span
+            className={`${styles.statusDot} ${
+              !connected ? styles.statusDotOff : ""
+            }`}
+          />
           {connected ? "CONNECTED" : "OFFLINE"}
         </div>
 
-        {/* Commander Alert Broadcast */}
         {isCommander && (
           <div className={styles.alertWrap} ref={alertRef}>
             <button
-              className={`${styles.iconBtn} ${alertOpen ? styles.iconBtnActive : ""}`}
+              className={`${styles.iconBtn} ${
+                alertOpen ? styles.iconBtnActive : ""
+              }`}
               onClick={() => setAlertOpen((o) => !o)}
               title="Broadcast Alert"
             >
@@ -106,7 +151,9 @@ const TopBar = () => {
                   exit={{ opacity: 0, y: -8, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
                 >
-                  <div className={styles.alertDropdownTitle}>⚠ Broadcast Alert</div>
+                  <div className={styles.alertDropdownTitle}>
+                    BROADCAST ALERT
+                  </div>
                   <form onSubmit={sendAlert} className={styles.alertForm}>
                     <input
                       value={alertText}
@@ -115,8 +162,12 @@ const TopBar = () => {
                       className={styles.alertInput}
                       autoFocus
                     />
-                    <button type="submit" className={styles.alertSend} disabled={!alertText.trim()}>
-                      Send
+                    <button
+                      type="submit"
+                      className={styles.alertSend}
+                      disabled={!alertText.trim()}
+                    >
+                      TRANSMIT
                     </button>
                   </form>
                 </motion.div>
@@ -125,10 +176,12 @@ const TopBar = () => {
           </div>
         )}
 
-        {/* Notification Bell */}
+        {/* Notification Center */}
         <div className={styles.notifWrap} ref={notifRef}>
           <button
-            className={`${styles.iconBtn} ${notifOpen ? styles.iconBtnActive : ""}`}
+            className={`${styles.iconBtn} ${
+              notifOpen ? styles.iconBtnActive : ""
+            }`}
             onClick={() => setNotifOpen((o) => !o)}
             title="Notifications"
           >
@@ -155,31 +208,65 @@ const TopBar = () => {
                 transition={{ duration: 0.15 }}
               >
                 <div className={styles.notifHeader}>
-                  <span>Notifications ({unreadCount})</span>
+                  <span className={styles.notifHeaderTitle}>
+                    NOTIFICATIONS
+                    {unreadCount > 0 && (
+                      <span className={styles.notifCountChip}>{unreadCount}</span>
+                    )}
+                  </span>
                   {unreadCount > 0 && (
                     <button
                       className={styles.clearAllBtn}
-                      onClick={() => notifications.forEach((n) => clearNotification(n.id))}
+                      onClick={handleMarkAllRead}
                     >
-                      Clear all
+                      Mark all read
                     </button>
                   )}
                 </div>
+
                 <div className={styles.notifList}>
-                  {notifications.length === 0 && (
-                    <div className={styles.notifEmpty}>No notifications</div>
+                  {loading && (
+                    <div className={styles.notifEmpty}>Loading...</div>
                   )}
-                  {notifications.map((n) => (
-                    <div key={n.id} className={`${styles.notifItem} ${styles[`notifItem_${n.type}`]}`}>
-                      <div className={styles.notifItemBody}>
-                        {n.title && <div className={styles.notifItemTitle}>{n.title}</div>}
-                        <div className={styles.notifItemMsg}>{n.message}</div>
-                      </div>
-                      <button className={styles.notifItemClose} onClick={() => clearNotification(n.id)}>
-                        <HiOutlineX />
-                      </button>
+                  {!loading && notifications.length === 0 && (
+                    <div className={styles.notifEmpty}>
+                      <HiOutlineBell style={{ fontSize: 24, marginBottom: 6 }} />
+                      <div>No notifications</div>
                     </div>
-                  ))}
+                  )}
+                  {notifications.map((n) => {
+                    const Icon = typeIcons[n.type] || HiOutlineInformationCircle;
+                    const color = typeColors[n.type] || "var(--text-secondary)";
+                    return (
+                      <motion.div
+                        key={n._id}
+                        className={`${styles.notifItem} ${
+                          !n.read ? styles.notifItemUnread : ""
+                        }`}
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        onClick={() => !n.read && handleMarkRead(n._id)}
+                        style={{ cursor: n.read ? "default" : "pointer" }}
+                      >
+                        <div
+                          className={styles.notifIcon}
+                          style={{ color }}
+                        >
+                          <Icon />
+                        </div>
+                        <div className={styles.notifItemBody}>
+                          {n.title && (
+                            <div className={styles.notifItemTitle}>{n.title}</div>
+                          )}
+                          <div className={styles.notifItemMsg}>{n.body}</div>
+                          <div className={styles.notifItemTime}>
+                            {formatTimeAgo(n.createdAt)}
+                          </div>
+                        </div>
+                        {!n.read && <span className={styles.unreadDot} />}
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </motion.div>
             )}

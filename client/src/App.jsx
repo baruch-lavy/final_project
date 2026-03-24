@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAuthStore } from "./stores/authStore";
 import { useSocketStore } from "./stores/socketStore";
+import AuthContext from "./stores/AuthContext";
 import AppLayout from "./components/layout/AppLayout";
 import { Spinner } from "./components/ui/Loader";
 import ToastContainer from "./components/ui/ToastContainer";
@@ -35,6 +36,7 @@ const ProtectedRoute = ({ children }) => {
 
 const AppRoutes = () => {
   const token = useAuthStore((s) => s.token);
+  const user = useAuthStore((s) => s.user);
   const verifyToken = useAuthStore((s) => s.verifyToken);
   const loading = useAuthStore((s) => s.loading);
   const initSocket = useSocketStore((s) => s.initSocket);
@@ -63,30 +65,32 @@ const AppRoutes = () => {
   }
 
   return (
-    <Suspense fallback={<Spinner />}>
-      <Routes>
-        <Route
-          path="/login"
-          element={token ? <Navigate to="/" replace /> : <LoginPage />}
-        />
-        <Route
-          element={
-            <ProtectedRoute>
-              <AppLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<DashboardPage />} />
-          <Route path="missions" element={<MissionsPage />} />
-          <Route path="assets" element={<AssetsPage />} />
-          <Route path="map" element={<MapPage />} />
-          <Route path="events" element={<EventsPage />} />
-          <Route path="chat" element={<ChatPage />} />
-          <Route path="personnel" element={<PersonnelPage />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Suspense>
+    <AuthContext value={{ user, token }}>
+      <Suspense fallback={<Spinner />}>
+        <Routes>
+          <Route
+            path="/login"
+            element={token ? <Navigate to="/" replace /> : <LoginPage />}
+          />
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<DashboardPage />} />
+            <Route path="missions" element={<MissionsPage />} />
+            <Route path="assets" element={<AssetsPage />} />
+            <Route path="map" element={<MapPage />} />
+            <Route path="events" element={<EventsPage />} />
+            <Route path="chat" element={<ChatPage />} />
+            <Route path="personnel" element={<PersonnelPage />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
+    </AuthContext>
   );
 };
 

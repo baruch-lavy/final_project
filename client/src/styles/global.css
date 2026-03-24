@@ -1,10 +1,11 @@
 :root {
   /* Primary palette */
-  --bg-primary: #0a0e17;
-  --bg-secondary: #111827;
-  --bg-tertiary: #1a2332;
-  --bg-card: rgba(17, 24, 39, 0.7);
-  --bg-glass: rgba(17, 24, 39, 0.4);
+  --bg-primary: #060a13;
+  --bg-secondary: #0d1320;
+  --bg-tertiary: #141d2f;
+  --bg-card: rgba(13, 19, 32, 0.8);
+  --bg-glass: rgba(13, 19, 32, 0.5);
+  --bg-elevated: rgba(20, 29, 47, 0.9);
 
   /* Accent colors */
   --accent-blue: #3b82f6;
@@ -13,6 +14,8 @@
   --accent-red: #ef4444;
   --accent-orange: #f59e0b;
   --accent-purple: #8b5cf6;
+  --accent-neon: #00f0ff;
+  --accent-gold: #fbbf24;
 
   /* Text */
   --text-primary: #e5e7eb;
@@ -21,14 +24,16 @@
   --text-bright: #f9fafb;
 
   /* Borders */
-  --border-color: rgba(75, 85, 99, 0.4);
+  --border-color: rgba(75, 85, 99, 0.3);
   --border-accent: rgba(59, 130, 246, 0.3);
+  --border-glow: rgba(6, 182, 212, 0.2);
 
   /* Shadows */
-  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
   --shadow-glow-blue: 0 0 20px rgba(59, 130, 246, 0.15);
   --shadow-glow-green: 0 0 20px rgba(16, 185, 129, 0.15);
   --shadow-glow-red: 0 0 20px rgba(239, 68, 68, 0.15);
+  --shadow-glow-cyan: 0 0 30px rgba(6, 182, 212, 0.1);
 
   /* Status colors */
   --status-active: #10b981;
@@ -45,6 +50,7 @@
   /* Spacing */
   --sidebar-width: 260px;
   --topbar-height: 60px;
+  --ticker-height: 32px;
 
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -55,6 +61,11 @@
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
+
+  /* HUD */
+  --hud-bracket-size: 12px;
+  --hud-bracket-thickness: 1.5px;
+  --hud-bracket-color: rgba(6, 182, 212, 0.4);
 }
 
 * {
@@ -80,6 +91,17 @@ body {
     Roboto,
     sans-serif;
   background-color: var(--bg-primary);
+  background-image:
+    radial-gradient(
+      ellipse at 20% 50%,
+      rgba(59, 130, 246, 0.03) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(6, 182, 212, 0.03) 0%,
+      transparent 50%
+    );
   color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -120,39 +142,6 @@ body {
   border-radius: var(--radius-md);
 }
 
-/* Map overrides */
-.leaflet-container {
-  background: var(--bg-primary) !important;
-  height: 100%;
-  width: 100%;
-}
-
-.leaflet-popup-content-wrapper {
-  background: var(--bg-secondary) !important;
-  color: var(--text-primary) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: var(--radius-md) !important;
-  box-shadow: var(--shadow-lg) !important;
-}
-
-.leaflet-popup-tip {
-  background: var(--bg-secondary) !important;
-}
-
-.leaflet-popup-close-button {
-  color: var(--text-secondary) !important;
-}
-
-.leaflet-control-zoom a {
-  background: var(--bg-secondary) !important;
-  color: var(--text-primary) !important;
-  border-color: var(--border-color) !important;
-}
-
-.leaflet-control-zoom a:hover {
-  background: var(--bg-tertiary) !important;
-}
-
 /* Animations */
 @keyframes pulse-glow {
   0%,
@@ -181,23 +170,44 @@ body {
 
 /* Scan animation used in radar/sidebar */
 @keyframes scan-line {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
 }
 
 /* Fade in up */
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Text flicker (for "CLASSIFIED" style text) */
 @keyframes flicker {
-  0%, 100% { opacity: 1; }
-  92% { opacity: 1; }
-  93% { opacity: 0.4; }
-  95% { opacity: 1; }
-  97% { opacity: 0.6; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.4;
+  }
+  95% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 0.6;
+  }
 }
 
 .animate-flicker {
@@ -206,8 +216,15 @@ body {
 
 /* Glow pulsing for important indicators */
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 5px currentColor; }
-  50% { box-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
+  0%,
+  100% {
+    box-shadow: 0 0 5px currentColor;
+  }
+  50% {
+    box-shadow:
+      0 0 20px currentColor,
+      0 0 40px currentColor;
+  }
 }
 
 .animate-glow {
@@ -216,6 +233,291 @@ body {
 
 /* Typing cursor */
 @keyframes blink-cursor {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ── HUD Corner Brackets ───────────────────────────────────────────── */
+.hud-corners {
+  position: relative;
+}
+.hud-corners::before,
+.hud-corners::after {
+  content: "";
+  position: absolute;
+  width: var(--hud-bracket-size);
+  height: var(--hud-bracket-size);
+  pointer-events: none;
+  z-index: 1;
+}
+.hud-corners::before {
+  top: 0;
+  left: 0;
+  border-top: var(--hud-bracket-thickness) solid var(--hud-bracket-color);
+  border-left: var(--hud-bracket-thickness) solid var(--hud-bracket-color);
+}
+.hud-corners::after {
+  top: 0;
+  right: 0;
+  border-top: var(--hud-bracket-thickness) solid var(--hud-bracket-color);
+  border-right: var(--hud-bracket-thickness) solid var(--hud-bracket-color);
+}
+
+/* Bottom brackets via extra pseudo on inner wrapper or data attribute */
+.hud-corners-full {
+  position: relative;
+}
+.hud-corners-full::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: var(--hud-bracket-size);
+  height: var(--hud-bracket-size);
+  border-bottom: var(--hud-bracket-thickness) solid var(--hud-bracket-color);
+  border-left: var(--hud-bracket-thickness) solid var(--hud-bracket-color);
+  pointer-events: none;
+  z-index: 1;
+}
+.hud-corners-full::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: var(--hud-bracket-size);
+  height: var(--hud-bracket-size);
+  border-bottom: var(--hud-bracket-thickness) solid var(--hud-bracket-color);
+  border-right: var(--hud-bracket-thickness) solid var(--hud-bracket-color);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Animated border sweep ─────────────────────────────────────────── */
+@keyframes border-sweep {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-border {
+  position: relative;
+  overflow: hidden;
+}
+.animated-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(6, 182, 212, 0.4) 25%,
+    rgba(59, 130, 246, 0.4) 50%,
+    rgba(6, 182, 212, 0.4) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: border-sweep 4s ease-in-out infinite;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ── Scan line overlay ─────────────────────────────────────────────── */
+@keyframes scan-sweep {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.scan-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(6, 182, 212, 0.03) 45%,
+    rgba(6, 182, 212, 0.06) 50%,
+    rgba(6, 182, 212, 0.03) 55%,
+    transparent 100%
+  );
+  animation: scan-sweep 6s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Radar sweep (full circle) ─────────────────────────────────────── */
+@keyframes radar-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Counter flip animation ────────────────────────────────────────── */
+@keyframes count-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.count-animate {
+  display: inline-block;
+  animation: count-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Stagger fade in ───────────────────────────────────────────────── */
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* ── Glow text ─────────────────────────────────────────────────────── */
+.text-glow-cyan {
+  text-shadow:
+    0 0 10px rgba(6, 182, 212, 0.5),
+    0 0 30px rgba(6, 182, 212, 0.2);
+}
+
+.text-glow-blue {
+  text-shadow:
+    0 0 10px rgba(59, 130, 246, 0.5),
+    0 0 30px rgba(59, 130, 246, 0.2);
+}
+
+.text-glow-red {
+  text-shadow:
+    0 0 10px rgba(239, 68, 68, 0.5),
+    0 0 30px rgba(239, 68, 68, 0.2);
+}
+
+/* ── 3D tilt card hover ────────────────────────────────────────────── */
+.tilt-card {
+  perspective: 800px;
+  transform-style: preserve-3d;
+  transition: transform var(--transition-normal);
+}
+.tilt-card:hover {
+  transform: rotateX(-2deg) rotateY(3deg) translateZ(4px);
+}
+
+/* ── Shimmer loading ───────────────────────────────────────────────── */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ── Grid background pattern ───────────────────────────────────────── */
+.cyber-grid {
+  background-image:
+    linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── Morphing blob for backgrounds ─────────────────────────────────── */
+@keyframes morph-blob {
+  0%,
+  100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+}
+
+/* ── Pulsing ring for alerts/status ────────────────────────────────── */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* ── CRT flicker subtle ───────────────────────────────────────────── */
+@keyframes crt-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.98;
+  }
+  25%,
+  75% {
+    opacity: 0.99;
+  }
+}
+
+/* ── Typewriter effect ─────────────────────────────────────────────── */
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--accent-cyan);
+  animation:
+    typewriter 2s steps(40) forwards,
+    blink-cursor 0.75s step-end infinite;
+}
+
+/* ── Selection style ───────────────────────────────────────────────── */
+::selection {
+  background: rgba(59, 130, 246, 0.3);
+  color: var(--text-bright);
+}
+
+/* ── Focus visible ─────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
 }

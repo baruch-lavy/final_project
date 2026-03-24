@@ -50,3 +50,15 @@ export const useDashboardStats = () => {
     refetchInterval: 15_000,
   });
 };
+
+export const useAnalytics = () => {
+  return useQuery({
+    queryKey: ["analytics-dashboard"],
+    queryFn: async () => {
+      const { data } = await api.get("/analytics/dashboard");
+      return data;
+    },
+    staleTime: 10_000,
+    refetchInterval: 20_000,
+  });
+};

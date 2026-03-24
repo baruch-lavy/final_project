@@ -1,0 +1,30 @@
+.detailSection {
+  margin-bottom: 18px;
+}
+.detailLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+.detailValue {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+.coordsRow {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.formGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}

@@ -11,6 +11,8 @@ import missionRoutes from "./routes/missions.js";
 import assetRoutes from "./routes/assets.js";
 import messageRoutes from "./routes/messages.js";
 import eventRoutes from "./routes/events.js";
+import analyticsRoutes from "./routes/analytics.js";
+import notificationRoutes from "./routes/notifications.js";
 
 // Connect to database
 connectDB();
@@ -49,6 +51,8 @@ app.use("/api/missions", missionRoutes);
 app.use("/api/assets", assetRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/events", eventRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
